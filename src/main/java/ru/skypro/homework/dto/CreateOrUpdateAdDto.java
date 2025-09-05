@@ -8,14 +8,15 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Создание или обновление объявления")
+@Schema(description = "Данные для создания или обновления объявления")
 public class CreateOrUpdateAdDto {
-    @Schema(description = "заголовок объявления", minLength = 4, maxLength = 32)
+
+    @Schema(description = "заголовок объявления")
     private String title;
 
-    @Schema(description = "цена объявления", minimum = "0", maximum = "10000000")
-    private Integer price;
+    @Schema(description = "цена объявления")
+    private int price;
 
-    @Schema(description = "описание объявления", minLength = 8, maxLength = 64)
+    @Schema(description = "описание объявления")
     private String description;
 }
