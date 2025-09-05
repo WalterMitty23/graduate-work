@@ -45,7 +45,6 @@ class AdServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
-    // ⚡ используем Spy, чтобы замокать uploadImage
     @Spy
     @InjectMocks
     private AdServiceImpl adService;
@@ -71,7 +70,6 @@ class AdServiceImplTest {
 
     @Test
     void addAd_shouldReturnDto() throws IOException {
-        // 👉 подставляем фиктивный путь
         ReflectionTestUtils.setField(adService, "photoPath", "build/test-photos");
 
         CreateOrUpdateAdDto createDto = new CreateOrUpdateAdDto();
@@ -96,7 +94,6 @@ class AdServiceImplTest {
         when(userRepository.findByEmail("test@test.com")).thenReturn(Optional.of(user));
         when(adMapper.toEntity(createDto)).thenReturn(ad);
 
-        // ⚡ мокируем save так, чтобы просто вернуть тот же объект
         when(adRepository.save(any(Ad.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(adMapper.toAdDto(any(Ad.class))).thenReturn(adDto);
 

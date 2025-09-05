@@ -32,16 +32,15 @@ public class WebSecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger и login/register
+
                         .mvcMatchers(AUTH_WHITELIST).permitAll()
 
-                        // Публичные объявления (только GET)
                         .mvcMatchers(HttpMethod.GET, "/ads/**").permitAll()
 
-                        // Публичные картинки пользователей (опционально)
                         .mvcMatchers(HttpMethod.GET, "/users/me/image").permitAll()
 
-                        // Всё остальное требует авторизации
+                        .mvcMatchers(HttpMethod.GET, "/users/*/image").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .cors()
