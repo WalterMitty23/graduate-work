@@ -1,35 +1,65 @@
 package ru.skypro.homework.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.AdDto;
-import ru.skypro.homework.dto.ExtendedAdDto;
+import ru.skypro.homework.dto.AdsDto;
 import ru.skypro.homework.dto.CreateOrUpdateAdDto;
-import ru.skypro.homework.model.Ad;
+import ru.skypro.homework.dto.ExtendedAdDto;
+import ru.skypro.homework.entity.Ad;
 
-@Mapper(componentModel = "spring")
-public interface AdMapper {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    AdMapper INSTANCE = Mappers.getMapper(AdMapper.class);
+@Service
+public class AdMapper {
+    public AdDto toAdDto(Ad ad) {
+        AdDto adDto = new AdDto();
 
-    // Ad → AdDto
-    @Mapping(source = "id", target = "pk")  // id → pk
-    @Mapping(source = "author.id", target = "author")
-    AdDto toDto(Ad ad);
+        adDto.setPk(ad.getPk());
+        adDto.setAuthor(ad.getUser().getId());
+        adDto.setImage("/ads/" + ad.getPk() + "/image");
+        adDto.setPrice((ad.getPrice()));
+        adDto.setTitle(ad.getTitle());
 
-    // Ad → ExtendedAd (расширенный вариант для деталей)
-    @Mapping(source = "id", target = "pk")
-    @Mapping(source = "author.firstName", target = "authorFirstName")
-    @Mapping(source = "author.lastName", target = "authorLastName")
-    @Mapping(source = "author.email", target = "email")
-    @Mapping(source = "author.phone", target = "phone")
-    ExtendedAdDto toExtendedDto(Ad ad);
+        return adDto;
+    }
 
-    // CreateOrUpdateAdDto → Ad
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
-    @Mapping(target = "comments", ignore = true)
-    @Mapping(target = "image", ignore = true)
-    Ad fromCreateDto(CreateOrUpdateAdDto dto);
+    public AdsDto toAdsDto(List<Ad> ads) {
+        AdsDto adsDto = new AdsDto();
+        List<AdDto> adDtoList = ads.stream()
+                .map(this::toAdDto)
+                .collect(Collectors.toList());
+
+        adsDto.setCount(adDtoList.size());
+        adsDto.setResults(adDtoList);
+
+        return adsDto;
+    }
+
+    public Ad toEntity (CreateOrUpdateAdDto createOrUpdateAdDto) {
+        Ad ad = new Ad();
+
+        ad.setTitle(createOrUpdateAdDto.getTitle());
+        ad.setDescription(createOrUpdateAdDto.getDescription());
+        ad.setPrice(createOrUpdateAdDto.getPrice());
+
+        return ad;
+
+    }
+
+    public ExtendedAdDto toExtendedAdDto(Ad ad) {
+        ExtendedAdDto extendedAdDto = new ExtendedAdDto();
+
+        extendedAdDto.setPk(ad.getPk());
+        extendedAdDto.setAuthorFirstName(ad.getUser().getFirstName());
+        extendedAdDto.setAuthorLastName(ad.getUser().getLastName());
+        extendedAdDto.setDescription(ad.getDescription());
+        extendedAdDto.setEmail(ad.getUser().getEmail());
+        extendedAdDto.setImage("/ads/" + ad.getPk() + "/image");
+        extendedAdDto.setPhone(ad.getUser().getPhone());
+        extendedAdDto.setPrice(ad.getPrice());
+        extendedAdDto.setTitle(ad.getTitle());
+
+        return extendedAdDto;
+    }
 }

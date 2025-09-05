@@ -10,17 +10,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "Объявление")
 public class AdDto {
+
     @Schema(description = "id автора объявления")
-    private Integer author;
+    private int author;
 
     @Schema(description = "ссылка на картинку объявления")
     private String image;
 
     @Schema(description = "id объявления")
-    private Integer pk;
+    private int pk;
 
     @Schema(description = "цена объявления")
-    private Integer price;
+    private int price;
 
     @Schema(description = "заголовок объявления")
     private String title;

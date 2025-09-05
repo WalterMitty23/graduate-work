@@ -1,25 +1,43 @@
 package ru.skypro.homework.mapper;
 
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.CommentDto;
+import ru.skypro.homework.dto.CommentsDto;
 import ru.skypro.homework.dto.CreateOrUpdateCommentDto;
-import ru.skypro.homework.model.Comment;
+import ru.skypro.homework.entity.Comment;
+import ru.skypro.homework.entity.User;
 
-@Mapper(componentModel = "spring")
-public interface CommentMapper {
+import java.util.List;
+import java.util.stream.Collectors;
+@Service
+public class CommentMapper {
+    public Comment toEntity (CreateOrUpdateCommentDto createOrUpdateCommentDto){
+        Comment comment = new Comment();
+        comment.setText(createOrUpdateCommentDto.getText());
+        return comment;
+    }
 
-    CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
+    public CommentDto toCommentDto(Comment comment){
+        CommentDto commentDto = new CommentDto();
+        commentDto.setPk(comment.getPk());
+        commentDto.setCreatedAt(comment.getCreatedAt());
+        commentDto.setText(comment.getText());
+        User user = comment.getUser();
+        commentDto.setAuthor(user.getId());
+        commentDto.setAuthorFirstName(user.getFirstName());
+        commentDto.setAuthorImage("/users/" + user.getEmail() + "/image");
+        return commentDto;
+    }
 
-    @Mapping(source = "id", target = "pk") // id → pk
-    @Mapping(source = "author.id", target = "author")
-    @Mapping(source = "author.firstName", target = "authorFirstName")
-    @Mapping(source = "author.image", target = "authorImage")
-    CommentDto toDto(Comment comment);
+    public CommentsDto toCommentsDto(List<Comment> comments) {
+        CommentsDto commentsDto = new CommentsDto();
+        List<CommentDto> commentDtoList = comments.stream()
+                .map(this::toCommentDto)
+                .collect(Collectors.toList());
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
-    @Mapping(target = "ad", ignore = true)
-    Comment fromCreateDto(CreateOrUpdateCommentDto dto);
+        commentsDto.setCount(commentDtoList.size());
+        commentsDto.setResults(commentDtoList);
+
+        return commentsDto;
+    }
 }

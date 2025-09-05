@@ -8,22 +8,23 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "Комментарий")
+@Schema(description = "Комментарий к объявлению")
 public class CommentDto {
-    @Schema(description = "id автора комментария")
-    private Integer author;
 
-    @Schema(description = "ссылка на аватар автора комментария")
+    @Schema(description = "id автора комментария")
+    private int author;
+
+    @Schema(description = "ссылка на аватар автора")
     private String authorImage;
 
-    @Schema(description = "имя создателя комментария")
+    @Schema(description = "имя автора комментария")
     private String authorFirstName;
 
-    @Schema(description = "дата и время создания комментария (мс с 01.01.1970)")
-    private Long createdAt;
+    @Schema(description = "время создания комментария (timestamp)")
+    private long createdAt;
 
     @Schema(description = "id комментария")
-    private Integer pk;
+    private int pk;
 
     @Schema(description = "текст комментария")
     private String text;
